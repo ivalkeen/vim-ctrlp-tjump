@@ -20,6 +20,15 @@ which jumps to the declaration in case of one match, and shows quick-search wind
     nnoremap <c-]> :CtrlPtjump<cr>
     ```
 
+    *Note for Ruby users*: to support identifiers with ! and ? in the end, consider
+    adding one more mapping to your .vimrc
+
+    ```
+    autocmd FileType ruby,eruby nnoremap <silent> <buffer> <C-]> :call ctrlp#tjump#exec(RubyCursorIdentifier())<CR>
+    ```
+
+    This requires vim-ruby plugin to be installed
+
 ## Basic Usage
 
 1. Move cursor to the Class/Method usage in your code

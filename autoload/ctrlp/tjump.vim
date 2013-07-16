@@ -17,8 +17,8 @@ call add(g:ctrlp_ext_vars, {
   \ 'specinput': 0,
   \ })
 
-function! ctrlp#tjump#exec()
-  let s:word = expand('<cword>')
+function! ctrlp#tjump#exec(word)
+  let s:word = a:word
   let taglist = taglist('^'.s:word.'$')
 
   if len(taglist) == 0
