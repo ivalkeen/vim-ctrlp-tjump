@@ -21,7 +21,9 @@ function! ctrlp#tjump#exec()
   let s:word = expand('<cword>')
   let taglist = taglist('^'.s:word.'$')
 
-  if len(taglist) == 1
+  if len(taglist) == 0
+    call echo("No tags found for: ".s:word)
+  elseif len(taglist) == 1
     call feedkeys(":tag ".s:word."\r", 'nt')
   else
     call ctrlp#init(ctrlp#tjump#id())
