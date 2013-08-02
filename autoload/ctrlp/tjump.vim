@@ -35,10 +35,11 @@ endfunction
 " Return: a Vim's List
 "
 function! ctrlp#tjump#init()
-  let input = map(taglist('^'.s:word.'$'), 'v:key + 1 . "\t" . v:val["kind"] . "\t" . v:val["name"] . "\t" . v:val["filename"] . "\t" . v:val["cmd"]')
+  let s:tags = taglist('^'.s:word.'$')
+  let input = map(s:tags, 'v:key + 1 . "\t" . v:val["kind"] . "\t" . v:val["name"] . "\t" . v:val["filename"] . "\t" . v:val["cmd"]')
   if !ctrlp#nosy()
     cal ctrlp#hicheck('CtrlPTabExtra', 'Comment')
-    sy match CtrlPTabExtra `^.*\t\(.*\t\)\@=`
+    sy match CtrlPTabExtra `^\(.\{-}\t\)\{3}`
     sy match CtrlPTabExtra `\(.*\t\)\@<=/.*/$`
   en
   return input
@@ -82,6 +83,6 @@ function! ctrlp#tjump#id()
 endfunction
 
 function! s:open_tag(str)
-  let [idx, kind, name, filename, cmd] = split(a:str, '\t')
-  call feedkeys(":".idx."tag ".name."\r", 'nt')
+  let idx = split(a:str, '\t')[0]
+  call feedkeys(":".idx."tag ".s:word."\r", 'nt')
 endfunction
