@@ -19,11 +19,11 @@ call add(g:ctrlp_ext_vars, {
 
 function! ctrlp#tjump#exec(word)
   let s:word = a:word
-  let taglist = taglist('^'.s:word.'$')
+  let s:taglist = taglist('^'.s:word.'$')
 
-  if len(taglist) == 0
+  if len(s:taglist) == 0
     echo("No tags found for: ".s:word)
-  elseif len(taglist) == 1
+  elseif len(s:taglist) == 1
     call feedkeys(":tag ".s:word."\r", 'nt')
   else
     call ctrlp#init(ctrlp#tjump#id())
@@ -35,8 +35,7 @@ endfunction
 " Return: a Vim's List
 "
 function! ctrlp#tjump#init()
-  let s:tags = taglist('^'.s:word.'$')
-  let input = map(s:tags, 'v:key + 1 . "\t" . v:val["kind"] . "\t" . v:val["name"] . "\t" . v:val["filename"] . "\t" . v:val["cmd"]')
+  let input = map(s:taglist, 'v:key + 1 . "\t" . v:val["kind"] . "\t" . v:val["name"] . "\t" . v:val["filename"] . "\t" . v:val["cmd"]')
   if !ctrlp#nosy()
     cal ctrlp#hicheck('CtrlPTabExtra', 'Comment')
     sy match CtrlPTabExtra `^\(.\{-}\t\)\{3}`
