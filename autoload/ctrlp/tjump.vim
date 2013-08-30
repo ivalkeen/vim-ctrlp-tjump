@@ -91,8 +91,18 @@ function! ctrlp#tjump#id()
 endfunction
 
 function! s:open_tag(str)
+  " If 'cscopetag' is set, the 'tag' command will actually use the 'cstag'
+  " command which in turn performs a 'tjump'. Since 'tjump' doesn't support
+  " ranges, if there is more than one match, the default tags menu is
+  " displayed. To work around this, we temporarily disable using 'cstag',
+  " however, in order to restore the option after a selection has been made we
+  " have to use 'exec' instead of 'feedkeys', otherwise the script will exit
+  " with the options restored before the 'tag' command is actually run.
+  let cstopt = &cst
+  set nocst
   let idx = split(a:str, '\t')[0]
-  call feedkeys(":".idx."tag ".s:word."\r", 'nt')
+  exec ":".idx."tag ".s:word
+  let &cst = cstopt
 endfunction
 
 function! s:get_visual_selection()
