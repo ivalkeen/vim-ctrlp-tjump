@@ -4,6 +4,11 @@ CtrlP extension for fuzzy-search in tag matches.
 May be used instead of `:tjump` or `:tselect` for IDE-like `Goto declaration` functionality,
 which jumps to the declaration in case of one match, and shows quick-search window in case of multiple matches.
 
+Two vim commands are created by this plugin:
+
+* `CtrlPtjump` - go to declaration of the identifier under cursor
+* `CtrlPtjumpVisual` - go to declaration of the visual selected text
+
 ![CtrlP tjump][1]
 
 ## Prerequisites
@@ -18,26 +23,15 @@ which jumps to the declaration in case of one match, and shows quick-search wind
 
     ```
     nnoremap <c-]> :CtrlPtjump<cr>
+    vnoremap <c-]> :CtrlPtjumpVisual<cr>
     ```
-
-    *Note for Ruby users*: to support identifiers with ! and ? in the end, consider
-    adding one more mapping to your .vimrc
-
-    ```
-    autocmd FileType ruby,eruby nnoremap <silent> <buffer> <C-]> :call ctrlp#tjump#exec(RubyCursorIdentifier())<CR>
-    ```
-
-    This requires vim-ruby plugin to be installed
 
 ## Basic Usage
 
 1. Move cursor to the Class/Method usage in your code
-2. Press `c-]` (if you have created mapping) or just execute `:CtrlPtjump` in the command line.
+2. Press `c-]` (if you have created mapping) or just execute `:CtrlPtjump`
+(or `:CtrlPtjumpVisual` in visual mode) in the command line.
 
 [1]: http://i.imgur.com/1UrMOpd.png
 [2]: https://github.com/kien/ctrlp.vim
 [3]: https://github.com/gmarik/vundle
-
-## TODO
-
-1. Support visual mode (with region selection)

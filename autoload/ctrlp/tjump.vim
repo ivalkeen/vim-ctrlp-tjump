@@ -1,24 +1,33 @@
-if ( exists('g:loaded_ctrlp_tjump') && g:loaded_ctrlp_tjump )
-  \ || v:version < 700 || &cp
+if (exists('g:loaded_ctrlp_tjump') && g:loaded_ctrlp_tjump)
+      \ || v:version < 700 || &cp
   finish
 endif
 let g:loaded_ctrlp_tjump = 1
 
 call add(g:ctrlp_ext_vars, {
-  \ 'init': 'ctrlp#tjump#init()',
-  \ 'accept': 'ctrlp#tjump#accept',
-  \ 'lname': 'tjump',
-  \ 'sname': 'tjump',
-  \ 'type': 'line',
-  \ 'enter': 'ctrlp#tjump#enter()',
-  \ 'exit': 'ctrlp#tjump#exit()',
-  \ 'opts': 'ctrlp#tjump#opts()',
-  \ 'sort': 0,
-  \ 'specinput': 0,
-  \ })
+      \ 'init': 'ctrlp#tjump#init()',
+      \ 'accept': 'ctrlp#tjump#accept',
+      \ 'lname': 'tjump',
+      \ 'sname': 'tjump',
+      \ 'type': 'line',
+      \ 'enter': 'ctrlp#tjump#enter()',
+      \ 'exit': 'ctrlp#tjump#exit()',
+      \ 'opts': 'ctrlp#tjump#opts()',
+      \ 'sort': 0,
+      \ 'specinput': 0,
+      \ })
 
-function! ctrlp#tjump#exec(word)
-  let s:word = a:word
+function! ctrlp#tjump#exec(mode)
+  if a:mode == 'v'
+    let s:word = s:get_visual_selection()
+  else
+    if (&filetype == 'ruby' || &filetype == 'eruby') && exists("*RubyCursorIdentifier")
+      let s:word = RubyCursorIdentifier()
+    else
+      let s:word = expand('<cword>')
+    endif
+  endif
+
   let s:taglist = taglist('^'.s:word.'$')
 
   if len(s:taglist) == 0
@@ -84,4 +93,13 @@ endfunction
 function! s:open_tag(str)
   let idx = split(a:str, '\t')[0]
   call feedkeys(":".idx."tag ".s:word."\r", 'nt')
+endfunction
+
+function! s:get_visual_selection()
+  let [lnum1, col1] = getpos("'<")[1:2]
+  let [lnum2, col2] = getpos("'>")[1:2]
+  let lines = getline(lnum1, lnum2)
+  let lines[-1] = lines[-1][: col2 - (&selection == 'inclusive' ? 1 : 2)]
+  let lines[0] = lines[0][col1 - 1:]
+  return join(lines, "\n")
 endfunction
