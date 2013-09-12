@@ -29,6 +29,7 @@ function! ctrlp#tjump#exec(mode)
   endif
 
   let s:taglist = taglist('^'.s:word.'$')
+  let s:bname = fnamemodify(bufname('%'), ':p')
 
   if len(s:taglist) == 0
     echo("No tags found for: ".s:word)
@@ -44,7 +45,8 @@ endfunction
 " Return: a Vim's List
 "
 function! ctrlp#tjump#init()
-  let input = map(s:taglist, 'v:key + 1 . "\t" . v:val["kind"] . "\t" . v:val["name"] . "\t" . v:val["filename"] . "\t" . v:val["cmd"]')
+  let input = map(s:order_tags(), 'v:key + 1 . "\t" . v:val["kind"] . "\t" . v:val["name"] . "\t" . v:val["filename"] . "\t" . v:val["cmd"]')
+
   if !ctrlp#nosy()
     cal ctrlp#hicheck('CtrlPTabExtra', 'Comment')
     sy match CtrlPTabExtra `^\(.\{-}\t\)\{3}`
@@ -52,7 +54,6 @@ function! ctrlp#tjump#init()
   en
   return input
 endfunction
-
 
 " The action to perform on the selected string
 "
@@ -71,11 +72,9 @@ endfunction
 function! ctrlp#tjump#enter()
 endfunction
 
-
 " (optional) Do something after exiting ctrlp
 function! ctrlp#tjump#exit()
 endfunction
-
 
 " (optional) Set or check for user options specific to this extension
 function! ctrlp#tjump#opts()
@@ -112,4 +111,18 @@ function! s:get_visual_selection()
   let lines[-1] = lines[-1][: col2 - (&selection == 'inclusive' ? 1 : 2)]
   let lines[0] = lines[0][col1 - 1:]
   return join(lines, "\n")
+endfunction
+
+" Put tags of current buffer first. Otherwise, taglist's order doesn't match
+" tselect's order
+function! s:order_tags()
+  let tgs = copy(s:taglist)
+  let [ctgs, otgs] = [[], []]
+
+  for tgi in tgs
+    let lst = s:bname == fnamemodify(tgi["filename"], ':p') ? 'ctgs' : 'otgs'
+    call call('add', [{lst}, tgi])
+  endfo
+
+  return ctgs + otgs
 endfunction
