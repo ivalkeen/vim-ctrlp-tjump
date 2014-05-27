@@ -4,6 +4,15 @@ if (exists('g:loaded_ctrlp_tjump') && g:loaded_ctrlp_tjump)
 endif
 let g:loaded_ctrlp_tjump = 1
 
+"
+" configuration options
+
+" replace expression with pattern in filenames' list
+" let g:ctrlp_tjump_shortener = ['scp://.*gems/', '.../']
+
+" Skip selection window if only one match found
+let g:ctrlp_tjump_only_silent = 0
+
 call add(g:ctrlp_ext_vars, {
       \ 'init': 'ctrlp#tjump#init()',
       \ 'accept': 'ctrlp#tjump#accept',
@@ -33,8 +42,8 @@ function! ctrlp#tjump#exec(mode)
 
   if len(s:taglist) == 0
     echo("No tags found for: ".s:word)
-  elseif len(s:taglist) == 1
-    call feedkeys(":tag ".s:word."\r", 'nt')
+  elseif len(s:taglist) == 1 && g:ctrlp_tjump_only_silent == 1
+    call feedkeys(":silent! tag ".s:word."\r", 'nt')
   else
     call ctrlp#init(ctrlp#tjump#id())
   endif
@@ -45,7 +54,7 @@ endfunction
 " Return: a Vim's List
 "
 function! ctrlp#tjump#init()
-  let input = map(s:order_tags(), 'v:key + 1 . "\t" . v:val["kind"] . "\t" . v:val["name"] . "\t" . v:val["filename"] . "\t" . v:val["cmd"]')
+  let input = map(s:order_tags(), 'v:key + 1 . "\t" . v:val["kind"] . "\t" . v:val["name"] . "\t" . s:short_filename(v:val["filename"]) . "\t" . v:val["cmd"]')
 
   if !ctrlp#nosy()
     cal ctrlp#hicheck('CtrlPTabExtra', 'Comment')
@@ -65,7 +74,7 @@ endfunction
 function! ctrlp#tjump#accept(mode, str)
   " For this example, just exit ctrlp and run help
   call ctrlp#exit()
-  call s:open_tag(a:str)
+  call s:open_tag(a:str, a:mode)
 endfunction
 
 " (optional) Do something before enterting ctrlp
@@ -89,7 +98,7 @@ function! ctrlp#tjump#id()
   return s:id
 endfunction
 
-function! s:open_tag(str)
+function! s:open_tag(str, mode)
   " If 'cscopetag' is set, the 'tag' command will actually use the 'cstag'
   " command which in turn performs a 'tjump'. Since 'tjump' doesn't support
   " ranges, if there is more than one match, the default tags menu is
@@ -100,7 +109,15 @@ function! s:open_tag(str)
   let cstopt = &cst
   set nocst
   let idx = split(a:str, '\t')[0]
-  exec ":".idx."tag ".s:word
+  if a:mode == 'e'
+    exec ":silent! ".idx."tag ".s:word
+  elseif a:mode == 't'
+    exec ":silent! tab ".idx."tag ".s:word
+  elseif a:mode == 'v'
+    exec ":silent! vertical ".idx."stag ".s:word
+  elseif a:mode == 'h'
+    exec ":silent! ".idx."stag ".s:word
+  end
   let &cst = cstopt
 endfunction
 
@@ -125,4 +142,14 @@ function! s:order_tags()
   endfo
 
   return ctgs + otgs
+endfunction
+
+" Shorten file name
+function! s:short_filename(filename)
+  if exists('g:ctrlp_tjump_shortener')
+    let short_filename = substitute(a:filename, g:ctrlp_tjump_shortener[0], g:ctrlp_tjump_shortener[1], 'g')
+  else
+    let short_filename = a:filename
+  end
+  return short_filename
 endfunction

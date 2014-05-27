@@ -32,6 +32,20 @@ Two vim commands are created by this plugin:
 2. Press `c-]` (if you have created mapping) or just execute `:CtrlPtjump`
 (or `:CtrlPtjumpVisual` in visual mode) in the command line.
 
+## Configuration
+
+It is possible to configure shortener for filenames, that will be displayed in
+CtrlP window. In the example below, RegExp `'/home/.*/gems/'` will be
+substituted by string `'.../'`. This may be useful if filename (with path) of
+generated tag is long and you want to make it shorter.
+
+    let g:ctrlp_tjump_shortener = ['/home/.*/gems/', '.../']
+
+If there is only one tag found, it is possible to open it without opening CtrlP
+window:
+
+    let g:ctrlp_tjump_only_silent = 1
+
 [1]: http://i.imgur.com/1UrMOpd.png
 [2]: https://github.com/kien/ctrlp.vim
 [3]: https://github.com/gmarik/vundle
