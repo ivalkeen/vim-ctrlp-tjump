@@ -11,7 +11,7 @@ let g:loaded_ctrlp_tjump = 1
 " let g:ctrlp_tjump_shortener = ['scp://.*gems/', '.../']
 
 " Skip selection window if only one match found
-let g:ctrlp_tjump_only_silent = 0
+if !exists('g:ctrlp_tjump_only_silent') | let g:ctrlp_tjump_only_silent = 0 | en
 
 call add(g:ctrlp_ext_vars, {
       \ 'init': 'ctrlp#tjump#init()',
