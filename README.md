@@ -45,6 +45,20 @@ If there is only one tag found, it is possible to open it without opening CtrlP
 window:
 
     let g:ctrlp_tjump_only_silent = 1
+    
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Added some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
+
+## Self-Promotion
+
+If you like this project, please follow the repository on [GitHub](https://github.com/ivalkeen/vim-ctrlp-tjump) and vote for it on
+[vim.org](http://www.vim.org/scripts/script.php?script_id=4673). You can also consider visiting my [blog](http://www.tkalin.com) and following me on [Twitter](https://twitter.com/ivalkeen) and [Github](https://github.com/ivalkeen).
+
 
 [1]: http://i.imgur.com/1UrMOpd.png
 [2]: https://github.com/kien/ctrlp.vim
