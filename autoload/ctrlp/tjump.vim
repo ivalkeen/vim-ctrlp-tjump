@@ -13,6 +13,9 @@ let g:loaded_ctrlp_tjump = 1
 " Skip selection window if only one match found
 if !exists('g:ctrlp_tjump_only_silent') | let g:ctrlp_tjump_only_silent = 0 | en
 
+" Skip tag name in list
+if !exists('g:ctrlp_tjump_skip_tag_name') | let g:ctrlp_tjump_skip_tag_name = 0 | en
+
 call add(g:ctrlp_ext_vars, {
       \ 'init': 'ctrlp#tjump#init()',
       \ 'accept': 'ctrlp#tjump#accept',
@@ -55,7 +58,8 @@ endfunction
 "
 function! ctrlp#tjump#init()
   " let input = map(s:order_tags(), 'v:key + 1 . "\t" . v:val["kind"] . "\t" . v:val["name"] . "\t" . s:short_filename(v:val["filename"]) . "\t" . v:val["cmd"]')
-  let input = map(s:taglist, 'v:key + 1 . "\t" . v:val["kind"] . "\t" . v:val["name"] . "\t" . s:short_filename(v:val["filename"]) . "\t" . v:val["cmd"]')
+  " let input = map(s:taglist, 'v:key + 1 . "\t" . v:val["kind"] . "\t" . v:val["name"] . "\t" . s:short_filename(v:val["filename"]) . "\t" . v:val["cmd"]')
+  let input = map(s:taglist, 'v:key + 1 . "\t" . v:val["kind"] . "\t" . (g:ctrlp_tjump_skip_tag_name ? "" : v:val["name"] . "\t") . s:short_filename(v:val["filename"]) . "\t" . v:val["cmd"]')
 
   if !ctrlp#nosy()
     cal ctrlp#hicheck('CtrlPTabExtra', 'Comment')

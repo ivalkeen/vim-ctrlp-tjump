@@ -46,6 +46,10 @@ window:
 
     let g:ctrlp_tjump_only_silent = 1
     
+The tag name itself takes valuable screen estate and can be disabled by:
+
+    let g:ctrlp_tjump_skip_tag_name = 1
+
 ## Contributing
 
 1. Fork it
