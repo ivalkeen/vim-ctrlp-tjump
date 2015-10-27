@@ -63,7 +63,13 @@ function! ctrlp#tjump#init()
 
   if !ctrlp#nosy()
     cal ctrlp#hicheck('CtrlPTabExtra', 'Comment')
-    sy match CtrlPTabExtra `^\(.\{-}\t\)\{3}`
+
+    if g:ctrlp_tjump_skip_tag_name
+      sy match CtrlPTabExtra `^\(.\{-}\t\)\{2}`
+    else
+      sy match CtrlPTabExtra `^\(.\{-}\t\)\{3}`
+    endif
+
     sy match CtrlPTabExtra `\(.*\t\)\@<=/.*/$`
   en
   return input
