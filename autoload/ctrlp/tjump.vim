@@ -57,9 +57,8 @@ endfunction
 " Return: a Vim's List
 "
 function! ctrlp#tjump#init()
-  " let input = map(s:order_tags(), 'v:key + 1 . "\t" . v:val["kind"] . "\t" . v:val["name"] . "\t" . s:short_filename(v:val["filename"]) . "\t" . v:val["cmd"]')
-  " let input = map(s:taglist, 'v:key + 1 . "\t" . v:val["kind"] . "\t" . v:val["name"] . "\t" . s:short_filename(v:val["filename"]) . "\t" . v:val["cmd"]')
-  let input = map(s:taglist, 'v:key + 1 . "\t" . v:val["kind"] . "\t" . (g:ctrlp_tjump_skip_tag_name ? "" : v:val["name"] . "\t") . s:short_filename(v:val["filename"]) . "\t" . v:val["cmd"]')
+  let input = map(s:order_tags(), 'v:key + 1 . "\t" . v:val["kind"] . "\t" . (g:ctrlp_tjump_skip_tag_name ? "" : v:val["name"] . "\t") . s:short_filename(v:val["filename"]) . "\t" . v:val["cmd"]')
+  " let input = map(s:taglist, 'v:key + 1 . "\t" . v:val["kind"] . "\t" . (g:ctrlp_tjump_skip_tag_name ? "" : v:val["name"] . "\t") . s:short_filename(v:val["filename"]) . "\t" . v:val["cmd"]')
 
   if !ctrlp#nosy()
     cal ctrlp#hicheck('CtrlPTabExtra', 'Comment')
