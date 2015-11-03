@@ -40,13 +40,16 @@ function! ctrlp#tjump#exec(mode)
     endif
   endif
 
+  let s:ignorecase_save = &ignorecase
+  set noignorecase
   let s:taglist = taglist('^'.s:word.'$')
   let s:bname = fnamemodify(bufname('%'), ':p')
 
   if len(s:taglist) == 0
     echo("No tags found for: ".s:word)
   elseif len(s:taglist) == 1 && g:ctrlp_tjump_only_silent == 1
-    call feedkeys(":silent! tag ".s:word."\r", 'nt')
+    exe "silent! tag ".s:word
+    let &ignorecase = s:ignorecase_save
   else
     call ctrlp#init(ctrlp#tjump#id())
   endif
@@ -85,6 +88,7 @@ function! ctrlp#tjump#accept(mode, str)
   " For this example, just exit ctrlp and run help
   call ctrlp#exit()
   call s:open_tag(a:str, a:mode)
+  let &ignorecase = s:ignorecase_save
 endfunction
 
 " (optional) Do something before enterting ctrlp
