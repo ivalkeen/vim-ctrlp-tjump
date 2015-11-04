@@ -51,6 +51,7 @@ function! ctrlp#tjump#exec(mode)
     exe "silent! tag ".s:word
     let &ignorecase = s:ignorecase_save
   else
+    let &ignorecase = s:ignorecase_save
     call ctrlp#init(ctrlp#tjump#id())
   endif
 endfunction
@@ -87,6 +88,8 @@ endfunction
 function! ctrlp#tjump#accept(mode, str)
   " For this example, just exit ctrlp and run help
   call ctrlp#exit()
+  let s:ignorecase_save = &ignorecase
+  set noignorecase
   call s:open_tag(a:str, a:mode)
   let &ignorecase = s:ignorecase_save
 endfunction
