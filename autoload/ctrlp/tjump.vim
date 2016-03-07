@@ -29,15 +29,19 @@ call add(g:ctrlp_ext_vars, {
       \ 'specinput': 0,
       \ })
 
-function! ctrlp#tjump#exec(mode)
+function! ctrlp#tjump#exec(mode, ...)
   if a:mode == 'v'
     let s:word = s:get_visual_selection()
   else
-    if (&filetype == 'ruby' || &filetype == 'eruby') && exists("*RubyCursorIdentifier")
-      let s:word = RubyCursorIdentifier()
+    if exists('a:1')
+      let s:word = a:1
     else
-      let s:word = expand('<cword>')
-    endif
+      if (&filetype == 'ruby' || &filetype == 'eruby') && exists("*RubyCursorIdentifier")
+        let s:word = RubyCursorIdentifier()
+      else
+        let s:word = expand('<cword>')
+      endif
+    en
   endif
 
   let s:taglist = taglist('^'.s:word.'$')

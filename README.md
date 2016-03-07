@@ -6,7 +6,7 @@ which jumps to the declaration in case of one match, and shows quick-search wind
 
 Two vim commands are created by this plugin:
 
-* `CtrlPtjump` - go to declaration of the identifier under cursor
+* `CtrlPtjump` - go to declaration of the identifier supplied as an argument, if not use the word under cursor
 * `CtrlPtjumpVisual` - go to declaration of the visual selected text
 
 ![CtrlP tjump][1]
@@ -31,6 +31,10 @@ Two vim commands are created by this plugin:
 1. Move cursor to the Class/Method usage in your code
 2. Press `c-]` (if you have created mapping) or just execute `:CtrlPtjump`
 (or `:CtrlPtjumpVisual` in visual mode) in the command line.
+
+Or provide the symbol as an argument:
+
+    :CtrlPtjump MyFavoriteClass
 
 ## Configuration
 
