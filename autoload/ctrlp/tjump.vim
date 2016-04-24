@@ -61,19 +61,27 @@ endfunction
 " Return: a Vim's List
 "
 function! ctrlp#tjump#init()
-  let input = map(s:order_tags(), 'v:key + 1 . "\t" . v:val["kind"] . "\t" . (g:ctrlp_tjump_skip_tag_name ? "" : v:val["name"] . "\t") . s:short_filename(v:val["filename"]) . "\t" . v:val["cmd"]')
-  " let input = map(s:taglist, 'v:key + 1 . "\t" . v:val["kind"] . "\t" . (g:ctrlp_tjump_skip_tag_name ? "" : v:val["name"] . "\t") . s:short_filename(v:val["filename"]) . "\t" . v:val["cmd"]')
+  let tgs = s:order_tags()
+  let max_short_filename = s:maxlen(tgs, 'short_filename') + 1
+  let input = map(tgs, '
+        \ s:align_left(v:key + 1, 3) . "\t" .
+        \ v:val["pri"] . "\t" .
+        \ v:val["kind"] . "\t" . 
+        \ (g:ctrlp_tjump_skip_tag_name ? "" : v:val["name"] . "\t") .
+        \ s:align_right(v:val["short_filename"], max_short_filename)."\t".
+        \ v:val["short_cmd"]
+        \ ')
 
   if !ctrlp#nosy()
     cal ctrlp#hicheck('CtrlPTabExtra', 'Comment')
 
     if g:ctrlp_tjump_skip_tag_name
-      sy match CtrlPTabExtra `^\(.\{-}\t\)\{2}`
+      sy match CtrlPTabExtra `\(.\{-}\t\)\{3}`
     else
-      sy match CtrlPTabExtra `^\(.\{-}\t\)\{3}`
+      sy match CtrlPTabExtra `\(.\{-}\t\)\{4}`
     endif
 
-    sy match CtrlPTabExtra `\(.*\t\)\@<=/.*/$`
+    sy match CtrlPTabExtra `.\{-}\t\zs.*\ze`
   en
   return input
 endfunction
@@ -144,18 +152,58 @@ function! s:get_visual_selection()
   return join(lines, "\n")
 endfunction
 
-" Put tags of current buffer first. Otherwise, taglist's order doesn't match
-" tselect's order
+" Order must match tselect's order (see :help tag-priority)
 function! s:order_tags()
-  let tgs = copy(s:taglist)
-  let [ctgs, otgs] = [[], []]
+  let [FSC, F_C, F__, FS_, _SC, __C, ___, _S_] = [[], [], [], [], [], [], [], []]
 
-  for tgi in tgs
-    let lst = s:bname == fnamemodify(tgi["filename"], ':p') ? 'ctgs' : 'otgs'
+  for tgi in s:taglist
+    let priority = s:priority(tgi)
+    let lst = substitute(priority, ' ', '_', 'g')
+    let tgi['pri'] = priority
+    let tgi['short_cmd'] = s:short_cmd(tgi)
+    let tgi['short_filename'] = s:short_filename(tgi['filename'])
     call call('add', [{lst}, tgi])
   endfo
 
-  return ctgs + otgs
+  return FSC + F_C + F__ + FS_ + _SC + __C + ___ + _S_
+endfunction
+
+function! s:align_left(str, width)
+  let pad = a:width - strlen(a:str)
+  return repeat(' ', pad).a:str
+endfunction
+
+function! s:align_right(str, width)
+  let pad = a:width - strlen(a:str)
+  return a:str.repeat(' ', pad)
+endfunction
+
+function! s:maxlen(tgs, key)
+  let max = 0
+  for tgi in a:tgs
+    let len = strlen(tgi[a:key])
+    if len > max
+      let max = len
+    endif
+  endfo
+  return max
+endfunction
+
+" Return the FSC priority string of a tag, see :help tag-priority
+function! s:priority(tgi)
+  let c_full_match = s:word == a:tgi['name'] ? 'F' : ' '
+  let c_static_tag = 1 == a:tgi['static'] ? 'S' : ' '
+  let c_current_file = s:bname == fnamemodify(a:tgi['filename'], ':p') ? 'C' : ' '
+  let priority = c_full_match.c_static_tag.c_current_file
+  return priority
+endfunction
+
+" Extract the trimmed cmd string between prefix and suffix
+" Valid tag cmd prefixes: /^ | ?^ | / | ?
+" Valid tag cmd suffixes: $/ | $? | / | ?
+function! s:short_cmd(tgi)
+  let short_cmd = substitute(a:tgi['cmd'], '\v^(/\^|\?\^|/|\?)?\s*(.{-})\s*(\$/|\$\?|/|\?)?$', '\2', '')
+  return short_cmd
 endfunction
 
 " Shorten file name
@@ -167,3 +215,5 @@ function! s:short_filename(filename)
   end
   return short_filename
 endfunction
+
+" vim:sw=2:ts=2:et
