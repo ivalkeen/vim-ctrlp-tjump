@@ -1,3 +1,4 @@
+
 if (exists('g:loaded_ctrlp_tjump') && g:loaded_ctrlp_tjump)
       \ || v:version < 700 || &cp
   finish
@@ -44,11 +45,19 @@ function! ctrlp#tjump#exec(mode, ...)
     en
   endif
 
-  let s:taglist = taglist('^'.s:word.'$')
+  if s:word =~ '^/'
+    " treat word starting with / as a regexp, see :help tag-regexp
+    let taglistexpr = strpart(s:word, 1)
+  else
+    " treat word as literal and construct an exact match regexp
+    let taglistexpr = '^'.escape(s:word, '^$.*~\').'$'
+  endif
+  " unlike :tag and :tselect, taglist always expect a regular expression
+  let s:taglist = taglist(taglistexpr)
   let s:bname = fnamemodify(bufname('%'), ':p')
 
   if len(s:taglist) == 0
-    echo("No tags found for: ".s:word)
+    echo('No tags found for: '.s:word.' (expr: '.taglistexpr.')')
   elseif len(s:taglist) == 1 && g:ctrlp_tjump_only_silent == 1
     call feedkeys(":silent! tag ".s:word."\r", 'nt')
   else
