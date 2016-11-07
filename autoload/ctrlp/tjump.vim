@@ -191,7 +191,7 @@ endfunction
 
 " Return the FSC priority string of a tag, see :help tag-priority
 function! s:priority(tgi)
-  let c_full_match = s:word == a:tgi['name'] ? 'F' : ' '
+  let c_full_match = s:word ==# a:tgi['name'] ? 'F' : ' '
   let c_static_tag = 1 == a:tgi['static'] ? 'S' : ' '
   let c_current_file = s:bname == fnamemodify(a:tgi['filename'], ':p') ? 'C' : ' '
   let priority = c_full_match.c_static_tag.c_current_file
