@@ -50,7 +50,7 @@ function! ctrlp#tjump#exec(mode, ...)
   if len(s:taglist) == 0
     echo("No tags found for: ".s:word)
   elseif len(s:taglist) == 1 && g:ctrlp_tjump_only_silent == 1
-    call feedkeys(":silent! tag ".s:word."\r", 'nt')
+    exec ":silent! tag ".s:word
   else
     call ctrlp#init(ctrlp#tjump#id())
   endif
