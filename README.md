@@ -14,7 +14,7 @@ Two vim commands are created by this plugin:
 ## Prerequisites
 
 1. [CtrlP][2] should be installed
-2. Tags should already work with `:tag`, `:tselect` and `:tjump` commands.
+2. Tags should already work with `:tag`, `:tselect` and `:tjump` commands. More information on that [here](http://vim.wikia.com/wiki/Browsing_programs_with_tags).
 
 ## Installation
 
